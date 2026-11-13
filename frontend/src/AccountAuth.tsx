@@ -5,7 +5,7 @@ import { phoneAuthEnabled, supabase } from './supabase';
 
 type Mode = 'signin' | 'signup' | 'phone' | 'recovery';
 
-export default function AccountAuth() {
+export default function AccountAuth({ onOpenPreview }: { onOpenPreview: () => void }) {
   const [mode, setMode] = useState<Mode>('signin');
   const [phoneStep, setPhoneStep] = useState<'request' | 'verify'>('request');
   const [name, setName] = useState('');
@@ -91,6 +91,7 @@ export default function AccountAuth() {
           <h1>Account services are not configured.</h1>
           <p>Add the Supabase project URL and public anon key to the deployment environment to enable secure sign-in.</p>
         </div>
+        <button className="preview-entry-button" type="button" onClick={onOpenPreview}>Explore read-only preview</button>
       </section>
     </main>;
   }
@@ -136,6 +137,7 @@ export default function AccountAuth() {
       </form>
       {mode === 'signin' && <button className="text-button" type="button" onClick={() => chooseMode('recovery')}>Forgot password?</button>}
       {mode === 'recovery' && <button className="text-button" type="button" onClick={() => chooseMode('signin')}>Back to sign in</button>}
+      <button className="preview-entry-button" type="button" onClick={onOpenPreview}>Explore read-only preview</button>
       <p className="login-security"><ShieldCheck size={15} /> {phoneAuthEnabled ? 'Email confirmation and phone codes protect your account.' : 'Email confirmation protects your account.'}</p>
       <div className="login-foot">© 2026 {BRAND.name} · Customer accounts</div>
     </section>

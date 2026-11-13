@@ -1,15 +1,17 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { LogOut, ShieldCheck } from 'lucide-react';
+import { Eye, LogOut, ShieldCheck } from 'lucide-react';
 import { BRAND } from './config';
 import AccountAuth from './AccountAuth';
 import { phoneAuthEnabled, supabase } from './supabase';
+import ReadOnlyPreview from './ReadOnlyPreview';
 import './account.css';
 
 export default function AccountApp() {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
   const [passwordRecovery, setPasswordRecovery] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     const client = supabase;
@@ -38,13 +40,14 @@ export default function AccountApp() {
   }, []);
 
   if (!ready) return <main className="login-page"><p role="status">Loading account…</p></main>;
+  if (previewOpen) return <ReadOnlyPreview onClose={() => setPreviewOpen(false)} />;
   const client = supabase;
-  if (!client || !user) return <AccountAuth />;
+  if (!client || !user) return <AccountAuth onOpenPreview={() => setPreviewOpen(true)} />;
   if (passwordRecovery) return <PasswordRecovery onComplete={() => setPasswordRecovery(false)} />;
-  return <AccountHome user={user} onSignOut={() => void client.auth.signOut()} />;
+  return <AccountHome user={user} onSignOut={() => void client.auth.signOut()} onOpenPreview={() => setPreviewOpen(true)} />;
 }
 
-function AccountHome({ user, onSignOut }: { user: User; onSignOut: () => void }) {
+function AccountHome({ user, onSignOut, onOpenPreview }: { user: User; onSignOut: () => void; onOpenPreview: () => void }) {
   const [name, setName] = useState(String(user.user_metadata.full_name ?? ''));
   const [phone, setPhone] = useState(user.phone ?? '');
   const [pendingPhone, setPendingPhone] = useState('');
@@ -124,7 +127,10 @@ function AccountHome({ user, onSignOut }: { user: User; onSignOut: () => void })
     <main className="main-area">
       <header className="topbar">
         <div className="crumb"><strong>{BRAND.name}</strong><i>/</i><span>Customer account</span></div>
-        <button className="logout-button" onClick={onSignOut}><LogOut size={17} /> Sign out</button>
+        <div className="account-header-actions">
+          <button className="outline-button" type="button" onClick={onOpenPreview}><Eye size={15} /> Explore preview</button>
+          <button className="logout-button" onClick={onSignOut}><LogOut size={17} /> Sign out</button>
+        </div>
       </header>
       <div className="page-content">
         <div className="page-title-row"><div><p className="eyebrow">CUSTOMER PROFILE</p><h1>Your account</h1></div></div>
