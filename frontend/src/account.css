@@ -1,0 +1,4 @@
+.account-grid--profile{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}
+.account-grid--profile .login-form+.login-form{border-top:1px solid #e7ece8;margin-top:16px;padding-top:16px}
+.form-success{margin:0;padding:10px 12px;border:1px solid #c9dfcf;border-radius:4px;background:#edf7ef;color:#24623b;font-size:12px}
+.account-notice{margin-top:18px;padding:12px;border-left:3px solid #b68b49;background:#f8f4ee;color:#4f493e;font-size:13px;line-height:1.55}

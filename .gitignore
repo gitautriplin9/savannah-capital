@@ -4,5 +4,6 @@ backend/data/*.sqlite
 backend/data/*.sqlite-shm
 backend/data/*.sqlite-wal
 .env
+*.env.local
 *.log
 .azure
