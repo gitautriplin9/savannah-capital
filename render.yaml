@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: savannah-capital-api
+    env: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm install --prefix backend
+    startCommand: npm --prefix backend run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: ACCESS_SECRET
+        generateValue: true
+      - key: REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://your-vercel-app.vercel.app,http://localhost:5173
+      - key: DATABASE_FILE
+        value: /tmp/savannah-capital.sqlite

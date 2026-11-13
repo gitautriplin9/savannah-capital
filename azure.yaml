@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: kcb-demo-banking
+metadata:
+    template: azd-init@1.37.3
+services:
+    kcb-demo-banking:
+        project: .
+        host: containerapp
+        language: ts
+resources:
+    kcb-demo-banking:
+        type: host.containerapp
+        port: 80
