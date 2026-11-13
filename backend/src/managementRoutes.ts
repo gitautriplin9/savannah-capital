@@ -1,6 +1,6 @@
 import express from 'express';
 import { z } from 'zod';
-import { db, resetDemo } from './db.js';
+import { db, resetSeededData } from './db.js';
 import { ApiError, audit, cents } from './ledger.js';
 import { managementAuth, validate } from './middleware.js';
 
@@ -44,6 +44,11 @@ managementRoutes.put('/management/settings', managementAuth, (req, res, next) =>
   } catch (error) { next(error); }
 });
 managementRoutes.post('/management/reset', managementAuth, (_req, res, next) => {
-  try { resetDemo(); audit('u-admin', 'demo_reset', {}); res.json({ reset: true }); }
+  try {
+    if (process.env.NODE_ENV === 'production') throw new ApiError(403, 'Seeded-data reset is disabled in production.', 'operation_disabled');
+    resetSeededData();
+    audit('u-admin', 'seeded_data_reset', {});
+    res.json({ reset: true });
+  }
   catch (error) { next(error); }
 });

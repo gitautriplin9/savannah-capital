@@ -6,7 +6,7 @@ import path from 'node:path';
 const dataDir = path.resolve(process.env.DATA_DIR ?? './data');
 fs.mkdirSync(dataDir, { recursive: true });
 
-export const db = new Database(process.env.DATABASE_FILE ?? path.join(dataDir, 'demo.sqlite'));
+export const db = new Database(process.env.DATABASE_FILE ?? path.join(dataDir, 'savannah-capital.sqlite'));
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
@@ -79,9 +79,9 @@ function insertAccount(userId: string, type: string, name: string, accountNumber
   return id;
 }
 
-function insertSeedTransaction(userId: string, accountId: string, cents: number, kind: string, description: string, date: Date, direction: 'credit' | 'debit', counterparty = 'KCB Demo') {
+function insertSeedTransaction(userId: string, accountId: string, cents: number, kind: string, description: string, date: Date, direction: 'credit' | 'debit', counterparty = 'Savannah Capital') {
   const txId = uuid();
-  const reference = `KCB${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+  const reference = `SAV${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
   const createdAt = date.toISOString();
   db.prepare(`INSERT INTO transactions (id,reference,user_id,kind,description,amount_cents,status,counterparty,created_at,flagged)
     VALUES (?,?,?,?,?,?,'completed',?,?,?)`).run(txId, reference, userId, kind, description, cents, counterparty, createdAt, cents > 10_000_000 ? 1 : 0);
@@ -92,7 +92,7 @@ function insertSeedTransaction(userId: string, accountId: string, cents: number,
     .run(uuid(), txId, clearingId, direction === 'credit' ? 'debit' : 'credit', cents, createdAt);
 }
 
-export function seedDemo() {
+export function seedInitialData() {
   const count = (db.prepare('SELECT COUNT(*) AS count FROM users').get() as { count: number }).count;
   if (count > 0) return;
 
@@ -101,15 +101,15 @@ export function seedDemo() {
       VALUES (?,?,?,?,?,?,?,'active','approved',?)`).run(id, email, bcrypt.hashSync(password, 10), bcrypt.hashSync(pin, 10), name, phone, role, now());
   };
 
-  addUser('u-salim', 'salim.demo@kcbbank.co.ke', 'Password123!', 'Salim Kiplimo', '+254 712 345 678', 'customer');
-  addUser('u-admin', 'admin@kcbbank.co.ke', 'Admin123!', 'Management Reviewer', '+254 700 000 001', 'admin');
-  addUser('u-teller', 'teller@kcbbank.co.ke', 'Teller123!', 'Jane Wanjiku', '+254 700 000 002', 'teller');
-  addUser('u-loan', 'loans@kcbbank.co.ke', 'Loan123!', 'Peter Mutua', '+254 700 000 003', 'loan_officer');
-  addUser('u-amina', 'amina.demo@kcbbank.co.ke', 'Customer123!', 'Amina Otieno', '+254 722 111 222', 'customer');
-  addUser('u-brian', 'brian.demo@kcbbank.co.ke', 'Customer123!', 'Brian Mwangi', '+254 733 222 333', 'customer');
-  addUser('u-grace', 'grace.demo@kcbbank.co.ke', 'Customer123!', 'Grace Njeri', '+254 711 333 444', 'customer');
-  addUser('u-david', 'david.demo@kcbbank.co.ke', 'Customer123!', 'David Kiptoo', '+254 722 444 555', 'customer');
-  insertAccount('u-admin', 'clearing', 'Demo Clearing Ledger', 'CLEARING-0001');
+  addUser('u-salim', 'salim@savannahcapital.example', 'Password123!', 'Salim Kiplimo', '+254 712 345 678', 'customer');
+  addUser('u-admin', 'admin@savannahcapital.example', 'Admin123!', 'Management Reviewer', '+254 700 000 001', 'admin');
+  addUser('u-teller', 'teller@savannahcapital.example', 'Teller123!', 'Jane Wanjiku', '+254 700 000 002', 'teller');
+  addUser('u-loan', 'loans@savannahcapital.example', 'Loan123!', 'Peter Mutua', '+254 700 000 003', 'loan_officer');
+  addUser('u-amina', 'amina@savannahcapital.example', 'Customer123!', 'Amina Otieno', '+254 722 111 222', 'customer');
+  addUser('u-brian', 'brian@savannahcapital.example', 'Customer123!', 'Brian Mwangi', '+254 733 222 333', 'customer');
+  addUser('u-grace', 'grace@savannahcapital.example', 'Customer123!', 'Grace Njeri', '+254 711 333 444', 'customer');
+  addUser('u-david', 'david@savannahcapital.example', 'Customer123!', 'David Kiptoo', '+254 722 444 555', 'customer');
+  insertAccount('u-admin', 'clearing', 'Clearing Ledger', 'CLEARING-0001');
 
   const accountIds = new Map<string, { current: string; savings: string; mobile: string }>();
   const customerData = [
@@ -123,7 +123,7 @@ export function seedDemo() {
   customerData.forEach((customer, index) => {
     const suffix = String(index + 1).padStart(3, '0');
     const current = insertAccount(customer.id, 'current', 'Current Account', `12345678${suffix}`);
-    const savings = insertAccount(customer.id, 'savings', 'KCB Goal Savings', `98765432${suffix}`);
+    const savings = insertAccount(customer.id, 'savings', 'Savannah Goal Savings', `98765432${suffix}`);
     const mobile = insertAccount(customer.id, 'mobile', 'M-Pesa Virtual Account', `25470000${suffix}`);
     db.prepare('INSERT INTO cards (id,user_id,last_four,type,created_at) VALUES (?,?,?,?,?)')
       .run(uuid(), customer.id, String(4821 + index), 'Visa debit', now());
@@ -159,7 +159,7 @@ export function seedDemo() {
 
   records.forEach(([daysAgo, amount, kind, description, direction], index) => {
     const date = new Date(Date.now() - daysAgo * 86400000 + index * 1900000);
-    insertSeedTransaction('u-salim', salim.current, amount, kind, description, date, direction, description.includes('Salary') ? 'Acme Kenya Ltd' : 'Demo beneficiary');
+    insertSeedTransaction('u-salim', salim.current, amount, kind, description, date, direction, description.includes('Salary') ? 'Acme Kenya Ltd' : 'Saved beneficiary');
   });
 
   const otherIds = ['u-amina', 'u-brian', 'u-grace', 'u-david'];
@@ -176,16 +176,16 @@ export function seedDemo() {
   db.prepare('INSERT INTO beneficiaries (id,user_id,name,destination,account_ref,created_at) VALUES (?,?,?,?,?,?)')
     .run(uuid(), 'u-salim', 'Amina Otieno', 'PesaLink', '1234567890', now());
   db.prepare('INSERT INTO notifications (id,user_id,title,body,created_at) VALUES (?,?,?,?,?)')
-    .run(uuid(), 'u-salim', 'Welcome to KCB Digital', 'Your demo accounts are ready to explore.', now());
+    .run(uuid(), 'u-salim', 'Welcome to Savannah Capital', 'Your accounts are ready to explore.', now());
   db.prepare("INSERT INTO settings (key,value) VALUES ('daily_limit_cents','50000000'),('mpesa_fee_cents','2500'),('transfer_fee_cents','0')").run();
 }
 
-export function resetDemo() {
+export function resetSeededData() {
   const reset = db.transaction(() => {
     db.exec('DELETE FROM ledger_entries; DELETE FROM transactions; DELETE FROM loans; DELETE FROM beneficiaries; DELETE FROM cards; DELETE FROM notifications; DELETE FROM audit_logs; DELETE FROM accounts; DELETE FROM users; DELETE FROM settings;');
-    seedDemo();
+    if (process.env.NODE_ENV !== 'production') seedInitialData();
   });
   reset();
 }
 
-seedDemo();
+if (process.env.NODE_ENV !== 'production') seedInitialData();

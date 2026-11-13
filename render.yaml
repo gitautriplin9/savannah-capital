@@ -19,6 +19,6 @@ services:
       - key: REFRESH_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: https://your-vercel-app.vercel.app,http://localhost:5173
+        value: https://savannah-capital-uuly.vercel.app
       - key: DATABASE_FILE
         value: /tmp/savannah-capital.sqlite

@@ -5,8 +5,9 @@ export type Transaction = { id: string; reference: string; kind: string; descrip
 export type Loan = { id: string; user_id: string; customer_name?: string; amount_cents: number; tenure_months: number; rate_percent: number; purpose: string; status: string; reviewer_comment: string; created_at: string; repaid_cents: number };
 
 type Session = { user: SessionUser; accessToken: string; refreshToken: string };
-const KEY = 'kcb-demo-session';
+const KEY = 'savannah-capital-session';
 const API_BASE_URL = ((typeof import.meta.env.VITE_API_URL === 'string' ? import.meta.env.VITE_API_URL : '').trim() || '').replace(/\/$/, '');
+export const staffApiAvailable = Boolean(API_BASE_URL) || import.meta.env.DEV;
 
 export const getSession = (): Session | null => {
   try { return JSON.parse(localStorage.getItem(KEY) ?? 'null') as Session | null; }
@@ -17,6 +18,9 @@ export const setSession = (session: Session | null) => session ? localStorage.se
 export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
   let session = getSession();
   const base = API_BASE_URL || '';
+  if (!API_BASE_URL && !import.meta.env.DEV) {
+    throw new Error('Staff access is unavailable because the secure banking API is not configured for this deployment.');
+  }
   const send = (token?: string) => fetch(`${base}/api${path}`, {
     ...options,
     headers: { 'content-type': 'application/json', ...(token ? { authorization: `Bearer ${token}` } : {}), ...options.headers },
@@ -30,6 +34,9 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
       setSession(session);
       response = await send(session.accessToken);
     } else setSession(null);
+  }
+  if (!response.headers.get('content-type')?.includes('json')) {
+    throw new Error(`The banking API returned an unexpected response (HTTP ${response.status}).`);
   }
   const body = await response.json() as T & { error?: { message?: string } };
   if (!response.ok) throw new Error(body.error?.message ?? 'Request failed.');

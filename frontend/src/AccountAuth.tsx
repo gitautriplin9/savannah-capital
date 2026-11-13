@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { BRAND } from './config';
 import { phoneAuthEnabled, supabase } from './supabase';
 
@@ -91,7 +92,8 @@ export default function AccountAuth({ onOpenPreview }: { onOpenPreview: () => vo
           <h1>Account services are not configured.</h1>
           <p>Add the Supabase project URL and public anon key to the deployment environment to enable secure sign-in.</p>
         </div>
-        <button className="preview-entry-button" type="button" onClick={onOpenPreview}>Explore read-only preview</button>
+        <button className="preview-entry-button" type="button" onClick={onOpenPreview}>Explore interactive demo</button>
+        <Link className="team-entry-button" to="/team/login"><Users size={15} /> Employee and manager access <ArrowRight size={14} /></Link>
       </section>
     </main>;
   }
@@ -104,6 +106,7 @@ export default function AccountAuth({ onOpenPreview }: { onOpenPreview: () => vo
       <div className="art-rings" />
       <span className="art-mark">{BRAND.logoText}</span>
       <div className="art-caption"><span>WEALTH,</span><strong>REIMAGINED.</strong></div>
+      <div className="art-story"><strong>More clarity for every next step.</strong><span>One secure place to understand your profile, explore everyday banking, and plan what comes next.</span></div>
       <div className="art-index">PRIVATE CAPITAL · KENYA</div>
     </div>
     <section className="login-panel">
@@ -137,7 +140,8 @@ export default function AccountAuth({ onOpenPreview }: { onOpenPreview: () => vo
       </form>
       {mode === 'signin' && <button className="text-button" type="button" onClick={() => chooseMode('recovery')}>Forgot password?</button>}
       {mode === 'recovery' && <button className="text-button" type="button" onClick={() => chooseMode('signin')}>Back to sign in</button>}
-      <button className="preview-entry-button" type="button" onClick={onOpenPreview}>Explore read-only preview</button>
+      <button className="preview-entry-button" type="button" onClick={onOpenPreview}>Explore interactive demo</button>
+      <Link className="team-entry-button" to="/team/login"><Users size={15} /> Employee and manager access <ArrowRight size={14} /></Link>
       <p className="login-security"><ShieldCheck size={15} /> {phoneAuthEnabled ? 'Email confirmation and phone codes protect your account.' : 'Email confirmation protects your account.'}</p>
       <div className="login-foot">© 2026 {BRAND.name} · Customer accounts</div>
     </section>

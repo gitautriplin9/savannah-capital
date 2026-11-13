@@ -24,11 +24,11 @@
 .preview-crumb{display:flex;align-items:center;gap:9px;color:#859087;font-size:10px}
 .preview-crumb i{font-style:normal;color:#c1cac2}
 .preview-crumb strong{color:#344239}
-.preview-demo-user{display:flex;align-items:center;gap:8px}
-.preview-demo-user>span:first-child{width:29px;height:29px;display:grid;place-items:center;border-radius:50%;background:#e8f0e8;color:var(--green);font-size:9px;font-weight:800}
-.preview-demo-user>span:last-child{display:grid;gap:2px}
-.preview-demo-user strong{font-size:10px}
-.preview-demo-user small{color:#839087;font-size:9px}
+.preview-user{display:flex;align-items:center;gap:8px;min-width:0}
+.preview-user>span:first-child{width:29px;height:29px;display:grid;place-items:center;border-radius:50%;background:#e8f0e8;color:var(--green);font-size:9px;font-weight:800;flex-shrink:0}
+.preview-user>span:last-child{display:grid;gap:2px;min-width:0}
+.preview-user strong{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+.preview-user small{color:#839087;font-size:9px}
 .preview-content{width:min(100%,1320px);margin:0 auto;padding:27px 28px 30px}
 .preview-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:19px}
 .preview-heading .eyebrow{margin-bottom:5px}
@@ -95,6 +95,20 @@
 .preview-detail{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #edf1ed;color:#78857b;font-size:9px}
 .preview-detail strong{color:#39473e;text-align:right}
 .preview-disabled{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:8px 10px;border:1px solid #e4e8e3;border-radius:3px;background:#f6f7f5;color:#879087;font-size:9px;font-weight:650;cursor:not-allowed}
+.preview-payment-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:end}
+.preview-payment-form label,.preview-loan-controls label{display:grid;gap:6px;color:#526056;font-size:10px;font-weight:650}
+.preview-payment-form input,.preview-payment-form select{width:100%;height:39px;padding:0 10px;border:1px solid #dfe6e0;border-radius:3px;background:#fff;color:#25332a;font-size:11px}
+.preview-payment-form input:focus,.preview-payment-form select:focus{outline:2px solid #0d6e5b33;border-color:#0d6e5b}
+.preview-primary-button{min-height:39px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 13px;border:1px solid #0d6e5b;border-radius:3px;background:#0d6e5b;color:#fff;font-size:10px;font-weight:750}
+.preview-primary-button:hover{background:#0b1f2d;border-color:#0b1f2d}
+.preview-action-message{margin:0;padding:10px 12px;border:1px solid #c9dfcf;border-radius:3px;background:#edf7ef;color:#24623b;font-size:10px;line-height:1.5}
+.preview-loan-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:16px 0}
+.preview-loan-controls label{grid-template-columns:1fr auto;align-items:center}
+.preview-loan-controls label strong{color:#24362b;font-size:11px}
+.preview-loan-controls input{grid-column:1/-1;width:100%;accent-color:#0d6e5b}
+.preview-loan-estimate{grid-column:1/-1;display:grid;gap:6px;padding:13px;border-left:3px solid #d4a65a;background:#f7f8f3}
+.preview-loan-estimate small{font-size:8px;color:#79877d;font-weight:750;letter-spacing:.07em}
+.preview-loan-estimate strong{font:750 19px 'Manrope',sans-serif;color:#0b1f2d}
 .preview-alert{display:flex;align-items:flex-start;gap:10px;padding:12px 2px;border-top:1px solid #edf1ed}
 .preview-alert>span{width:29px;height:29px;display:grid;place-items:center;flex-shrink:0;border-radius:4px;background:#eaf2ec;color:var(--green)}
 .preview-alert>div{display:grid;gap:4px}
@@ -108,4 +122,4 @@
 .account-header-actions{display:flex;align-items:center;gap:10px}
 .account-header-actions .logout-button{width:auto;border-top:0}
 @media(max-width:850px){.preview-sidebar{width:205px}.preview-content{padding:22px 18px}.preview-columns{grid-template-columns:1fr}}
-@media(max-width:650px){.preview-banner{flex-wrap:wrap;font-size:9px}.preview-banner>span{flex:1}.preview-banner button{margin-left:auto;padding:6px 8px}.preview-shell{display:block}.preview-sidebar{position:static;width:auto;height:auto;padding:11px;background:#fff;border-right:0;border-bottom:1px solid #e3e9e3}.preview-brand{display:none}.preview-nav-label{display:none}.preview-sidebar nav{display:flex;overflow:auto;gap:5px}.preview-sidebar nav button{min-width:max-content;min-height:35px;padding:0 9px;font-size:9px}.preview-sidebar-note{display:none}.preview-topbar{height:49px;padding:0 13px}.preview-demo-user>span:last-child{display:none}.preview-content{padding:18px 12px}.preview-heading h1{font-size:19px}.preview-balance{min-height:130px;padding:17px}.preview-balance strong{font-size:22px}.preview-account-grid{grid-template-columns:1fr}.preview-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.preview-summary-grid .preview-card{padding:11px}.preview-summary-grid .preview-card>strong{font-size:15px}.preview-summary-grid .preview-card>small{font-size:7px}.preview-loan-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.preview-card-grid{grid-template-columns:1fr}.account-header-actions .outline-button{font-size:9px;padding:0 8px}.account-header-actions .logout-button{font-size:9px;padding:8px 5px}}
+@media(max-width:650px){.preview-banner{flex-wrap:wrap;font-size:9px}.preview-banner>span{flex:1}.preview-banner button{margin-left:auto;padding:6px 8px}.preview-shell{display:block}.preview-sidebar{position:static;width:auto;height:auto;padding:11px;background:#fff;border-right:0;border-bottom:1px solid #e3e9e3}.preview-brand{display:none}.preview-nav-label{display:none}.preview-sidebar nav{display:flex;overflow:auto;gap:5px}.preview-sidebar nav button{min-width:max-content;min-height:35px;padding:0 9px;font-size:9px}.preview-sidebar-note{display:none}.preview-topbar{height:49px;padding:0 13px}.preview-user>span:last-child{display:none}.preview-content{padding:18px 12px}.preview-heading h1{font-size:19px}.preview-balance{min-height:130px;padding:17px}.preview-balance strong{font-size:22px}.preview-account-grid{grid-template-columns:1fr}.preview-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.preview-summary-grid .preview-card{padding:11px}.preview-summary-grid .preview-card>strong{font-size:15px}.preview-summary-grid .preview-card>small{font-size:7px}.preview-loan-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.preview-loan-controls,.preview-payment-form{grid-template-columns:1fr}.preview-card-grid{grid-template-columns:1fr}.account-header-actions .outline-button{font-size:9px;padding:0 8px}.account-header-actions .logout-button{font-size:9px;padding:8px 5px}}

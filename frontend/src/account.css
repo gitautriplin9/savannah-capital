@@ -2,3 +2,20 @@
 .account-grid--profile .login-form+.login-form{border-top:1px solid #e7ece8;margin-top:16px;padding-top:16px}
 .form-success{margin:0;padding:10px 12px;border:1px solid #c9dfcf;border-radius:4px;background:#edf7ef;color:#24623b;font-size:12px}
 .account-notice{margin-top:18px;padding:12px;border-left:3px solid #b68b49;background:#f8f4ee;color:#4f493e;font-size:13px;line-height:1.55}
+.art-story{position:relative;z-index:1;display:grid;gap:8px;max-width:390px;margin-top:-65px}
+.art-story strong{font:700 19px/1.35 'Manrope',sans-serif;color:#fff}
+.art-story span{max-width:350px;color:#d4e5dc;font-size:12px;line-height:1.65}
+.team-role-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 15px}
+.team-role-picker button{min-height:84px;display:grid;grid-template-columns:20px 1fr;align-content:start;align-items:start;gap:8px;padding:12px 10px;border:1px solid #e1e9e2;border-radius:4px;background:#fff;color:#5e6f63;text-align:left}
+.team-role-picker button>svg{color:#688374}
+.team-role-picker button span{display:grid;gap:5px}
+.team-role-picker button strong{font-size:10px;color:#28392e}
+.team-role-picker button small{font-size:8px;line-height:1.4;color:#859087}
+.team-role-picker button.active{border-color:#0d6e5b;background:#f0f7f1;box-shadow:0 0 0 2px #0d6e5b18}
+.team-role-picker button.active>svg{color:#0d6e5b}
+.api-unavailable{margin:0 0 12px;padding:10px 12px;border:1px solid #f0dfc3;border-left:3px solid #d4a65a;border-radius:3px;background:#fbf8f1;color:#755e36;font-size:10px;line-height:1.5}
+.team-entry-button{width:100%;min-height:39px;margin-top:8px;padding:0 12px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #dce5dd;border-radius:3px;background:#f8faf8;color:#35473b;font-size:10px;font-weight:700}
+.team-entry-button:hover{border-color:#9bb9a0;background:#f0f6f1}
+.account-user-chip{margin-left:auto;margin-right:15px;display:flex;align-items:center;gap:8px;color:#314137;font-size:11px}
+.account-user-chip>span{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#e8f0e8;color:#0d6e5b;font-size:9px;font-weight:800}
+@media(max-width:760px){.art-story{display:none}.team-role-picker{grid-template-columns:1fr}.team-role-picker button{min-height:55px;grid-template-columns:20px 1fr;align-items:center}.account-user-chip{display:none}}

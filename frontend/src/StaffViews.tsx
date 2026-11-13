@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, Search, X } from 'lucide-react';
 import { api, type Loan } from './api';
 import { kes } from './config';
-const notify = (message: string) => window.dispatchEvent(new CustomEvent('demo-toast', { detail: message }));
+const notify = (message: string) => window.dispatchEvent(new CustomEvent('app-toast', { detail: message }));
 type Customer = { id: string; name: string; email: string; phone: string; status: string; kycStatus: string; balanceCents: number };
 
 export function TellerDesk() {

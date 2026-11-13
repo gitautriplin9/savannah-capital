@@ -13,8 +13,8 @@ customerRoutes.get('/config/fees', (_req, res) => {
 });
 const otp = (email: string) => {
   const code = String(crypto.randomInt(100000, 999999));
-  console.info(`[DEMO OTP] ${email}: ${code}`);
-  return `Demo verification code: ${code}`;
+  console.info(`[SIMULATED OTP] ${email}: ${code}`);
+  return `Simulated verification code: ${code}`;
 };
 
 customerRoutes.get('/accounts', customerAuth, (req, res) => {
@@ -52,7 +52,7 @@ customerRoutes.post('/transfers', customerAuth, (req, res, next) => {
     let counterparty = input.destination;
     if (input.type === 'internal') {
       const destinationAccount = db.prepare("SELECT id,user_id,number,frozen FROM accounts WHERE number=? AND type!='clearing'").get(input.destination) as { id: string; user_id: string; number: string; frozen: number } | undefined;
-      if (!destinationAccount) throw new ApiError(404, 'KCB demo account not found.', 'destination_not_found');
+      if (!destinationAccount) throw new ApiError(404, 'Savannah Capital account not found.', 'destination_not_found');
       if (destinationAccount.frozen) throw new ApiError(403, 'The destination account is frozen.', 'destination_frozen');
       const holder = db.prepare('SELECT name FROM users WHERE id=?').get(destinationAccount.user_id) as { name: string };
       destinationAccountId = destinationAccount.id;

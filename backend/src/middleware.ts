@@ -23,7 +23,7 @@ export const auth = (allowed?: Role[]) => (req: Request, _res: Response, next: N
     const payload = jwt.verify(token, ACCESS_SECRET) as JwtPayload;
     if (payload.type !== 'access' || typeof payload.sub !== 'string') throw new ApiError(401, 'Session expired. Sign in again.', 'session_expired');
     const user = db.prepare('SELECT * FROM users WHERE id=?').get(payload.sub) as User | undefined;
-    if (!user || (allowed && !allowed.includes(user.role))) throw new ApiError(403, 'You do not have permission to perform this action.', 'forbidden');
+    if (!user || user.status !== 'active' || (allowed && !allowed.includes(user.role))) throw new ApiError(403, 'You do not have permission to perform this action.', 'forbidden');
     req.user = user;
     next();
   } catch (error) {

@@ -6,7 +6,7 @@ This repository is now prepared for a public deployment without Azure dependency
 
 - Frontend: Vercel
 - API: Render
-- Database: SQLite for a demo/public preview, or Postgres for a more production-like setup
+- Database: SQLite for a temporary simulated preview, or Postgres for persistent hosting
 
 ## 1) Deploy the backend on Render
 
@@ -28,12 +28,13 @@ https://savannah-capital-api.onrender.com
 ## 2) Deploy the frontend on Vercel
 
 1. Import the repo into Vercel.
-2. Set the root directory to the project root.
-3. Add environment variable:
+2. Set the project root to `frontend` so its Vite output and `frontend/vercel.json` SPA route fallback are used.
+3. Add the customer-authentication variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+4. Add the employee API variable:
    - `VITE_API_URL=https://savannah-capital-api.onrender.com`
-4. Deploy the frontend.
+5. Deploy the frontend.
 
-The app will call the backend at that URL.
+The customer sign-in uses Supabase. The `/team/login` page uses the Render API and shows branch-agent, lending-officer, and manager access. Employee sign-in remains unavailable until the API is deployed and reachable at that URL.
 
 ## 3) Validate the live app
 
@@ -42,5 +43,7 @@ The app will call the backend at that URL.
 
 ## 4) Notes
 
-- The existing `better-sqlite3` database is suitable for a demo/public preview, but for heavier real-world usage, a managed Postgres database is recommended.
-- Replace demo-only secrets and demo credentials before broad external access.
+- The SQLite database is ephemeral on Render unless a persistent disk is configured. Use managed PostgreSQL for persistent hosted data.
+- The production API requires explicit signing secrets and does not create local seeded accounts. Provision employee identities through a secure process; never enable default demo credentials in production.
+- The application and all financial operations are simulations. Do not handle real funds or customer data.
+- The interactive `/demo` preview uses browser-local sample data. Its payment flow and CSV statement export do not call the API.

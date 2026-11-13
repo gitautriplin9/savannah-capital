@@ -40,14 +40,14 @@ export default function AccountApp() {
   }, []);
 
   if (!ready) return <main className="login-page"><p role="status">Loading account…</p></main>;
-  if (previewOpen) return <ReadOnlyPreview onClose={() => setPreviewOpen(false)} />;
+  if (previewOpen && !user) return <ReadOnlyPreview onClose={() => setPreviewOpen(false)} />;
   const client = supabase;
   if (!client || !user) return <AccountAuth onOpenPreview={() => setPreviewOpen(true)} />;
   if (passwordRecovery) return <PasswordRecovery onComplete={() => setPasswordRecovery(false)} />;
-  return <AccountHome user={user} onSignOut={() => void client.auth.signOut()} onOpenPreview={() => setPreviewOpen(true)} />;
+  return <AccountHome user={user} onSignOut={() => void client.auth.signOut()} />;
 }
 
-function AccountHome({ user, onSignOut, onOpenPreview }: { user: User; onSignOut: () => void; onOpenPreview: () => void }) {
+function AccountHome({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const [name, setName] = useState(String(user.user_metadata.full_name ?? ''));
   const [phone, setPhone] = useState(user.phone ?? '');
   const [pendingPhone, setPendingPhone] = useState('');
@@ -56,6 +56,7 @@ function AccountHome({ user, onSignOut, onOpenPreview }: { user: User; onSignOut
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     const client = supabase;
@@ -65,6 +66,8 @@ function AccountHome({ user, onSignOut, onOpenPreview }: { user: User; onSignOut
       else if (data?.full_name) setName(data.full_name);
     });
   }, [user.id]);
+
+  if (previewOpen) return <ReadOnlyPreview cardholderName={name} onClose={() => setPreviewOpen(false)} />;
 
   async function saveProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -127,8 +130,9 @@ function AccountHome({ user, onSignOut, onOpenPreview }: { user: User; onSignOut
     <main className="main-area">
       <header className="topbar">
         <div className="crumb"><strong>{BRAND.name}</strong><i>/</i><span>Customer account</span></div>
+        <div className="account-user-chip"><span>{name.trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase() || 'SC'}</span><strong>{name.trim() || 'Customer'}</strong></div>
         <div className="account-header-actions">
-          <button className="outline-button" type="button" onClick={onOpenPreview}><Eye size={15} /> Explore preview</button>
+          <button className="outline-button" type="button" onClick={() => setPreviewOpen(true)}><Eye size={15} /> Explore preview</button>
           <button className="logout-button" onClick={onSignOut}><LogOut size={17} /> Sign out</button>
         </div>
       </header>

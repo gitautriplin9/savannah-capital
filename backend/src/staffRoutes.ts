@@ -22,7 +22,7 @@ staffRoutes.post('/staff/deposit', auth(['teller']), (req, res, next) => {
 staffRoutes.post('/staff/withdraw', auth(['teller']), (req, res, next) => {
   try {
     const input = validate(z.object({ userId: z.string(), amount: z.number().positive().max(200_000), idempotencyKey: z.string().min(8) }), req.body);
-    const result = transfer({ userId: input.userId, amount: input.amount, kind: 'cash_withdrawal', description: 'Teller cash withdrawal', counterparty: 'KCB Teller', idempotencyKey: input.idempotencyKey });
+    const result = transfer({ userId: input.userId, amount: input.amount, kind: 'cash_withdrawal', description: 'Teller cash withdrawal', counterparty: 'Savannah Capital Teller', idempotencyKey: input.idempotencyKey });
     audit(req.user!.id, 'teller_withdrawal', { userId: input.userId, amount: input.amount, reference: result.reference });
     res.status(201).json(result);
   } catch (error) { next(error); }

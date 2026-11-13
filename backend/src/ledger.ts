@@ -7,7 +7,7 @@ export class ApiError extends Error {
   }
 }
 
-export const reference = () => `KCB${crypto.randomBytes(5).toString('hex').toUpperCase()}`;
+export const reference = () => `SAV${crypto.randomBytes(5).toString('hex').toUpperCase()}`;
 export const cents = (kes: number) => Math.round(kes * 100);
 
 export function accountBalance(accountId: string): number {
@@ -93,7 +93,7 @@ export function creditAccount(userId: string, amount: number, description: strin
   const timestamp = new Date().toISOString();
   const execute = db.transaction(() => {
     db.prepare(`INSERT INTO transactions (id,reference,user_id,kind,description,amount_cents,status,counterparty,idempotency_key,created_at)
-      VALUES (?,?,?,?,?,?,'completed',?,?,?)`).run(transactionId, ref, userId, kind, description, amountCents, 'KCB Teller', idempotencyKey ?? null, timestamp);
+      VALUES (?,?,?,?,?,?,'completed',?,?,?)`).run(transactionId, ref, userId, kind, description, amountCents, 'Savannah Capital Teller', idempotencyKey ?? null, timestamp);
     db.prepare('INSERT INTO ledger_entries (id,transaction_id,account_id,direction,amount_cents,created_at) VALUES (?,?,?,?,?,?)')
       .run(crypto.randomUUID(), transactionId, account.id, 'credit', amountCents, timestamp);
     db.prepare('INSERT INTO ledger_entries (id,transaction_id,account_id,direction,amount_cents,created_at) VALUES (?,?,?,?,?,?)')

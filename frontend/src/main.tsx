@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import AccountApp from './AccountApp';
+import App from './App';
 import ReadOnlyPreview from './ReadOnlyPreview';
 import './styles.css';
 import './views.css';
@@ -15,6 +16,7 @@ function RootApp() {
   const navigate = useNavigate();
   return <Routes>
     <Route path="/demo" element={<ReadOnlyPreview onClose={() => navigate('/')} />} />
+    <Route path="/team/*" element={<App basePath="/team" teamAccess />} />
     <Route path="*" element={<AccountApp />} />
   </Routes>;
 }

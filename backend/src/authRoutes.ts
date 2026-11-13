@@ -6,10 +6,9 @@ import { z } from 'zod';
 import { ACCESS_SECRET, REFRESH_SECRET } from './config.js';
 import { db } from './db.js';
 import { audit, ApiError } from './ledger.js';
-import { auth, validate, type Role, type User } from './middleware.js';
+import { auth, validate, type User } from './middleware.js';
 
 export const authRoutes = express.Router();
-const demoUsers: Record<Role, string> = { customer: 'u-salim', teller: 'u-teller', loan_officer: 'u-loan', admin: 'u-admin' };
 const tokens = (user: User) => ({
   accessToken: jwt.sign({ sub: user.id, role: user.role, type: 'access' }, ACCESS_SECRET, { expiresIn: '15m' }),
   refreshToken: jwt.sign({ sub: user.id, type: 'refresh' }, REFRESH_SECRET, { expiresIn: '7d' }),
@@ -27,7 +26,13 @@ const findUserByIdentifier = (identifier: string) => {
 
 authRoutes.post('/login', (req, res, next) => {
   try {
-    const input = validate(z.object({ identifier: z.string().trim().min(1).optional(), email: z.string().trim().optional(), phone: z.string().trim().optional(), password: z.string().min(1) }), req.body);
+    const input = validate(z.object({
+      identifier: z.string().trim().min(1).optional(),
+      email: z.string().trim().optional(),
+      phone: z.string().trim().optional(),
+      password: z.string().min(1),
+      expectedRole: z.enum(['customer', 'teller', 'loan_officer', 'admin']).optional(),
+    }), req.body);
     const identifier = input.identifier ?? input.email ?? input.phone;
     if (!identifier) throw new ApiError(400, 'Email or phone number is required.', 'missing_identifier');
     const user = findUserByIdentifier(identifier) as (User & { password_hash: string; locked_until: string | null; failed_logins: number }) | undefined;
@@ -38,6 +43,10 @@ authRoutes.post('/login', (req, res, next) => {
       db.prepare('UPDATE users SET failed_logins=?,locked_until=? WHERE id=?').run(failed, failed >= 5 ? new Date(Date.now() + 15 * 60_000).toISOString() : null, user.id);
       audit(user.id, 'login_failed', { attempts: failed });
       throw new ApiError(failed >= 5 ? 423 : 401, failed >= 5 ? 'Account locked for 15 minutes after five failed attempts.' : 'Email or password is incorrect.', failed >= 5 ? 'account_locked' : 'invalid_credentials');
+    }
+    if (input.expectedRole && user.role !== input.expectedRole) {
+      audit(user.id, 'workspace_login_denied', { requestedRole: input.expectedRole });
+      throw new ApiError(403, 'You do not have access to this workspace.', 'workspace_forbidden');
     }
     db.prepare('UPDATE users SET failed_logins=0,locked_until=NULL WHERE id=?').run(user.id);
     audit(user.id, 'login', { role: user.role });
@@ -83,7 +92,7 @@ authRoutes.post('/register', (req, res, next) => {
     };
 
     createAccount('current', 'Current Account');
-    createAccount('savings', 'KCB Goal Savings');
+    createAccount('savings', 'Savannah Goal Savings');
     createAccount('mobile', 'M-Pesa Virtual Account');
 
     const user = db.prepare('SELECT * FROM users WHERE id=?').get(userId) as User;
@@ -107,15 +116,6 @@ authRoutes.post('/reset-password', (req, res, next) => {
     db.prepare('UPDATE users SET password_hash=?,failed_logins=0,locked_until=NULL WHERE id=?').run(bcrypt.hashSync(input.password, 10), user.id);
     audit(user.id, 'password_reset', { via: 'email_or_phone' });
     res.json({ success: true, message: 'Password reset successfully.' });
-  } catch (error) { next(error); }
-});
-
-authRoutes.post('/demo-login', (req, res, next) => {
-  try {
-    const { role } = validate(z.object({ role: z.enum(['customer', 'teller', 'loan_officer', 'admin']) }), req.body);
-    const user = db.prepare('SELECT * FROM users WHERE id=?').get(demoUsers[role]) as User;
-    audit(user.id, 'demo_login', { role });
-    res.json({ user: safeUser(user), ...tokens(user) });
   } catch (error) { next(error); }
 });
 
